@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+    <head>
+        <meta charset="utf-8">
+        <meta name="author" content="Yuriko Uchida">
+        <meta name="description" content="tetris game">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <title> Tetris Game </title>
+    </head>
+    <body>
+        <canvas id="can"></canvas>
+        <footer class="fixed-bottom d-flex justify-content-center">
+            <div>
+                <p><small> &copy; <a rel="external" href="https://www.linkedin.com/in/yuriko-uchida/" target="_blank"> Yuriko Uchida </a></small></p>
+                <time datetime="2021-08-27"><small> August 27, 2021 </small></time>
+            </div>
+        </footer>
+        <script>
+            let $canvas = document.getElementById("can");
+            let context = $canvas.getContext("2d");
+            const BLOCK_SIZE     = 30;
+            const TETROMINO_SIZE = 4;
+            let tetromino = [
+                [ 0, 0, 0, 0 ],//0 means NO block, 1 means a block.                  
+                [ 1, 1, 0, 0 ],                  
+                [ 0, 1, 1, 0 ],                  
+                [ 0, 0, 0, 0 ],                  
+            ];
+
+            // context.fillStyle = "red";
+            // context.fillRect( 0, 0, BLOCK_SIZE, BLOCK_SIZE );//Draw a square with BLOCK_SIZE at (0,0) coordinate
+
+            for ( let y = 0; y < TETROMINO_SIZE; y++ ) {
+                for ( let x = 0; x < TETROMINO_SIZE; x++ ) {
+                    if ( tetromino[y][x] ) {
+                        let px = x * BLOCK_SIZE;
+                        let py = y * BLOCK_SIZE;
+                        context.fillStyle = "red";
+                        context.fillRect( px, py, BLOCK_SIZE, BLOCK_SIZE );//Draw blocks in "Z" with BLOCK_SIZE at (px,py) coordinate
+                        context.strokeStyle = "black";
+                        context.strokeRect( px, py, BLOCK_SIZE, BLOCK_SIZE );
+                    }
+                }
+            } 
+        </script>
+    </body>
+</html>
