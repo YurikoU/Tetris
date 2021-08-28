@@ -26,21 +26,100 @@ $canvas.width        = SCREEN_W;
 $canvas.height       = SCREEN_H;
 $canvas.style.border = "4px solid #555";
 
-//Two-dimensional array to express four blocks * four blocks 
-//0 is empty space, 1 has a block.
-let tetromino = [
-    [ 0, 0, 0, 0 ],
-    [ 1, 1, 0, 0 ],                  
-    [ 0, 1, 1, 0 ],                  
-    [ 0, 0, 0, 0 ],                  
+
+const TETROMINO_COLORS = [
+    "#000", //#0, no color (dummy)
+    "#6CF", //#1, light blue
+    "#F92", //#2, orange
+    "#66F", //#3, blue
+    "#C5C", //#4, purple
+    "#FD2", //#5, yellow
+    "#F44", //#6, red
+    "#5B5", //#7, green
 ];
 
-//Beginning coordinate for a tetromino
-let tetromino_x = 0;
-let tetromino_y = 0;
+//Three-dimensional array to store all seven tetrominos with four blocks * four blocks 
+//0 is empty space, 1 has a block.
+const TETROMINO_TYPES = 
+[
+    //#0, no tetromino (dummy)
+    [],
+
+    //#1, I
+    [
+        [ 0, 0, 0, 0 ],
+        [ 1, 1, 1, 1 ],                  
+        [ 0, 0, 0, 0 ],                  
+        [ 0, 0, 0, 0 ],                  
+    ], 
+
+    //#2, L
+    [
+        [ 0, 1, 0, 0 ],
+        [ 0, 1, 0, 0 ],                  
+        [ 0, 1, 1, 0 ],                  
+        [ 0, 0, 0, 0 ],                  
+    ], 
+
+    //#3, J
+    [
+        [ 0, 0, 1, 0 ],
+        [ 0, 0, 1, 0 ],                  
+        [ 0, 1, 1, 0 ],                  
+        [ 0, 0, 0, 0 ],                  
+    ], 
+
+    //#4, T
+    [
+        [ 0, 1, 0, 0 ],
+        [ 0, 1, 1, 0 ],                  
+        [ 0, 1, 0, 0 ],                  
+        [ 0, 0, 0, 0 ],                  
+    ], 
+
+    //#5, O
+    [
+        [ 0, 0, 0, 0 ],
+        [ 0, 1, 1, 0 ],                  
+        [ 0, 1, 1, 0 ],                  
+        [ 0, 0, 0, 0 ],                  
+    ], 
+
+    //#6, Z
+    [
+        [ 0, 0, 0, 0 ],
+        [ 1, 1, 0, 0 ],                  
+        [ 0, 1, 1, 0 ],                  
+        [ 0, 0, 0, 0 ],                  
+    ], 
+
+    //#7, S
+    [
+        [ 0, 0, 0, 0 ],
+        [ 0, 1, 1, 0 ],                  
+        [ 1, 1, 0, 0 ],                  
+        [ 0, 0, 0, 0 ],                  
+    ],     
+];
+
+//Starting tetromino coordinate at the center of the X-axis
+const START_X = FIELD_COLUMN / 2 - TETROMINO_SIZE / 2;
+const START_Y = 0;
+
+//Current tetromino coordinate
+let tetromino_x = START_X;
+let tetromino_y = START_Y;
+
+//Two-dimensional array to express a tetromino from all types
+let tetromino;
+
+//Tetromino shape randomly selected between #1 and #7
+let tetromino_type = Math.floor( Math.random() * (TETROMINO_TYPES.length-1) ) + 1;
+tetromino = TETROMINO_TYPES[ tetromino_type ];
 
 //Field content
 let field = [];
+
 
 init();
 drawAll();
@@ -65,10 +144,11 @@ function init () {
 }
 
 //Draw a single block
-function drawBlock ( x, y ) {
+function drawBlock ( x, y, color ) {
     let printX = x * BLOCK_SIZE;
     let printY = y * BLOCK_SIZE;
-    context.fillStyle = "red";
+
+    context.fillStyle = TETROMINO_COLORS[ color ];
     context.fillRect( printX, printY, BLOCK_SIZE, BLOCK_SIZE );//Draw a tetromino with BLOCK_SIZE at (printX,printY) coordinate
     context.strokeStyle = "black";//Draw a frame
     context.strokeRect( printX, printY, BLOCK_SIZE, BLOCK_SIZE );
@@ -85,7 +165,7 @@ function drawAll () {
     for ( let y = 0; y < FIELD_ROW; y++ ) {
         for ( let x = 0; x < FIELD_COLUMN; x++ ) {
             if ( field[y][x] != 0 ) {
-                drawBlock( x, y );
+                drawBlock( x, y, field[y][x] );
             }
         }
     }
@@ -94,7 +174,7 @@ function drawAll () {
     for ( let y = 0; y < TETROMINO_SIZE; y++ ) {
         for ( let x = 0; x < TETROMINO_SIZE; x++ ) {
             if ( tetromino[y][x] != 0 ) {
-                drawBlock( tetromino_x+x, tetromino_y+y );
+                drawBlock( tetromino_x+x, tetromino_y+y, tetromino_type );
             }
         }
     }
@@ -115,8 +195,8 @@ function checkMove ( moveX, moveY, newTetromino ) {
                 let newX = tetromino_x + x + moveX;
                 let newY = tetromino_y + y + moveY;
 
-                if ( field[newY][newX] != 0  ||  newX < 0  ||  newY < 0  ||  
-                    FIELD_COLUMN <= newX  ||  FIELD_ROW <= newY ) {
+                if ( newX < 0  ||  newY < 0  ||  FIELD_COLUMN <= newX  ||  FIELD_ROW <= newY
+                    ||  field[newY][newX] != 0 ) {
                     return false;
                 }
             }
@@ -148,7 +228,8 @@ function fixTetromino () {
     for ( let y = 0; y < TETROMINO_SIZE; y++ ) {
         for ( let x = 0; x < TETROMINO_SIZE; x++ ) {
             if ( tetromino[y][x] != 0 ) {
-                field[tetromino_y+y][tetromino_x+x] = 1;
+                //Fix the tetromino shape as tetromino_type
+                field[tetromino_y+y][tetromino_x+x] = tetromino_type;
             }
         }
     }
@@ -162,8 +243,12 @@ function dropTetromino () {
     } else {
         //Once the tetromino reaches the screen bottom, a user can not move it
         fixTetromino();
-        tetromino_x = 0;
-        tetromino_y = 0;
+
+        //A new tetromino shape will be selected randomly again
+        tetromino_type = Math.floor( Math.random() * (TETROMINO_TYPES.length-1) ) + 1;
+        tetromino   = TETROMINO_TYPES[ tetromino_type ];
+        tetromino_x = START_X;
+        tetromino_y = START_Y;
     }
 
     drawAll();
