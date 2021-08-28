@@ -10,18 +10,19 @@ const FIELD_ROW    = 20;
 //Block size (px)
 const BLOCK_SIZE = 30;
 
-//Canvas size
+//Screen size (px)
 const SCREEN_W = BLOCK_SIZE * FIELD_COLUMN;
 const SCREEN_H = BLOCK_SIZE * FIELD_ROW;
 
-//Tetromino size (px)
+//Tetromino size
 const TETROMINO_SIZE = 4;
 
 let $canvas = document.getElementById("can");
 let context = $canvas.getContext("2d");
 
-$canvas.width  = SCREEN_W;
-$canvas.height = SCREEN_H;
+$canvas.width        = SCREEN_W;
+$canvas.height       = SCREEN_H;
+$canvas.style.border = "4px solid #555";
 
 
 //Array to express four blocks * four blocks 
@@ -41,7 +42,7 @@ drawTetromino();
 
 //Print a tetromino
 function drawTetromino () {
-    
+
     //Clear the previous image
     context.clearRect( 0, 0, SCREEN_W, SCREEN_H );
 
@@ -51,7 +52,7 @@ function drawTetromino () {
                 let printX = ( tetromino_x + x ) * BLOCK_SIZE;
                 let printY = ( tetromino_y + y ) * BLOCK_SIZE;
                 context.fillStyle = "red";
-                context.fillRect( printX, printY, BLOCK_SIZE, BLOCK_SIZE );//Draw blocks in "Z" with BLOCK_SIZE at (printX,printY) coordinate
+                context.fillRect( printX, printY, BLOCK_SIZE, BLOCK_SIZE );//Draw a tetromino with BLOCK_SIZE at (printX,printY) coordinate
                 context.strokeStyle = "black";//Draw a frame
                 context.strokeRect( printX, printY, BLOCK_SIZE, BLOCK_SIZE );
             }
@@ -60,6 +61,7 @@ function drawTetromino () {
 }
 
 
+//Process when a user presses a certain key
 document.onkeydown = function( e ) {
     switch( e.code ) {
         case 'ArrowLeft':  //←
