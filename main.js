@@ -37,55 +37,60 @@ let tetromino = [
 let tetromino_x = 0;
 let tetromino_y = 0;
 
-//Field itself
+//Field content
 let field = [];
 
+init();
+drawAll();
 
 //Initialize an empty field with FIELD_COLUMN * FIELD_ROW
-for ( let y = 0; y < FIELD_ROW; y++ ) {
-    field[y] = [];
-    for ( let x = 0; x < FIELD_COLUMN; x++ ) {
-        field[y][x] = 0;
+function init () {
+    for ( let y = 0; y < FIELD_ROW; y++ ) {
+        field[y] = [];
+        for ( let x = 0; x < FIELD_COLUMN; x++ ) {
+            field[y][x] = 0;
+        }
     }
+    
+    //Demo
+    field[19][0] = 1;
+    field[19][9] = 1;
+    field[ 0][9] = 1;
 }
 
-drawField();
-drawTetromino();
 
 
-//Draw a field
-function drawField () {
+//Draw a single block
+function drawBlock ( x, y ) {
+    let printX = x * BLOCK_SIZE;
+    let printY = y * BLOCK_SIZE;
+    context.fillStyle = "red";
+    context.fillRect( printX, printY, BLOCK_SIZE, BLOCK_SIZE );//Draw a tetromino with BLOCK_SIZE at (printX,printY) coordinate
+    context.strokeStyle = "black";//Draw a frame
+    context.strokeRect( printX, printY, BLOCK_SIZE, BLOCK_SIZE );
+}
+
+
+//Draw the field and a tetromino
+function drawAll () {
 
     //Clear the previous image
     context.clearRect( 0, 0, SCREEN_W, SCREEN_H );
 
+    //Draw the field
     for ( let y = 0; y < FIELD_ROW; y++ ) {
         for ( let x = 0; x < FIELD_COLUMN; x++ ) {
             if ( field[y][x] != 0 ) {
-                let printX = x * BLOCK_SIZE;
-                let printY = y * BLOCK_SIZE;
-                context.fillStyle = "red";
-                context.fillRect( printX, printY, BLOCK_SIZE, BLOCK_SIZE );//Draw a tetromino with BLOCK_SIZE at (printX,printY) coordinate
-                context.strokeStyle = "black";//Draw a frame
-                context.strokeRect( printX, printY, BLOCK_SIZE, BLOCK_SIZE );
+                drawBlock( x, y );
             }
         }
     }
-}
 
-
-//Draw a tetromino
-function drawTetromino () {
-
+    //Draw a tetromino
     for ( let y = 0; y < TETROMINO_SIZE; y++ ) {
         for ( let x = 0; x < TETROMINO_SIZE; x++ ) {
             if ( tetromino[y][x] != 0 ) {
-                let printX = ( tetromino_x + x ) * BLOCK_SIZE;
-                let printY = ( tetromino_y + y ) * BLOCK_SIZE;
-                context.fillStyle = "red";
-                context.fillRect( printX, printY, BLOCK_SIZE, BLOCK_SIZE );//Draw a tetromino with BLOCK_SIZE at (printX,printY) coordinate
-                context.strokeStyle = "black";//Draw a frame
-                context.strokeRect( printX, printY, BLOCK_SIZE, BLOCK_SIZE );
+                drawBlock( tetromino_x+x, tetromino_y+y );
             }
         }
     }
@@ -111,6 +116,5 @@ document.onkeydown = function( e ) {
             break;
     }
 
-    drawField();
-    drawTetromino();
+    drawAll();
 }
