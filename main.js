@@ -99,11 +99,16 @@ function drawAll () {
 
 
 //Check if the new coordinate is available
-function checkMove ( moveX, moveY ) {
+function checkMove ( moveX, moveY, newTetromino ) {
+    //If the tetromino is simply moving along with the arrow key
+    if ( newTetromino == undefined ) {
+        newTetromino = tetromino;
+    }
+    
     for ( let y = 0; y < TETROMINO_SIZE; y++ ) {
         for ( let x = 0; x < TETROMINO_SIZE; x++ ) {
 
-            if ( tetromino[y][x] != 0 ) {
+            if ( newTetromino[y][x] != 0 ) {
                 let newX = tetromino_x + x + moveX;
                 let newY = tetromino_y + y + moveY;
 
@@ -118,16 +123,30 @@ function checkMove ( moveX, moveY ) {
     return true;
 }
 
+//Rotate a tetromino
+function rotate () {
+    //Initialize a new two-dimensional array 
+    let newTetro = [];
+    
+    for ( let y = 0; y < TETROMINO_SIZE; y++ ) {
+        newTetro[y] = [];
+        for ( let x = 0; x < TETROMINO_SIZE; x++ ) {
+            newTetro[y][x] = tetromino[TETROMINO_SIZE-x-1][y];
+        }
+    }
+
+    return newTetro;
+}
 
 //Process when a user presses a certain key
 document.onkeydown = function( e ) {
     switch( e.code ) {
-        case 'ArrowLeft':  //←
+        case 'ArrowLeft': //←
             if ( checkMove( -1, 0 ) ) {
                 tetromino_x--;
             }
             break;
-        case 'ArrowUp':    //↑
+        case 'ArrowUp': //↑
             if ( checkMove( 0, -1 ) ) {
                 tetromino_y--;
             }
@@ -137,12 +156,17 @@ document.onkeydown = function( e ) {
                 tetromino_x++;
             }
             break;
-        case 'ArrowDown':  //↓
+        case 'ArrowDown': //↓
             if ( checkMove( 0, 1 ) ) {
                 tetromino_y++;
             }
             break;
-        case 'Space':      //Space key
+        case 'Space': //Space key
+            let newTetromino = rotate();
+            //Check if the new tetromino can rotate at the same coordinate
+            if ( checkMove( 0, 0, newTetromino ) ) {
+                tetromino = newTetromino;
+            }
             break;
     }
 
