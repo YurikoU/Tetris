@@ -2,6 +2,8 @@
 
 
 
+//Speed to drop a new block
+const GAME_SPEED = 300;
 
 //Field size
 const FIELD_COLUMN = 10;
@@ -43,6 +45,9 @@ let field = [];
 init();
 drawAll();
 
+setInterval( dropTetromino, GAME_SPEED );
+
+
 //Initialize an empty field with FIELD_COLUMN * FIELD_ROW
 function init () {
     //Clear the field
@@ -58,8 +63,6 @@ function init () {
     field[19][9] = 1;
     field[ 0][9] = 1;
 }
-
-
 
 //Draw a single block
 function drawBlock ( x, y ) {
@@ -123,6 +126,7 @@ function checkMove ( moveX, moveY, newTetromino ) {
     return true;
 }
 
+
 //Rotate a tetromino
 function rotate () {
     //Initialize a new two-dimensional array 
@@ -137,6 +141,34 @@ function rotate () {
 
     return newTetro;
 }
+
+
+//Fix the tetromino's coordinate and shape once it reaches the bottom
+function fixTetromino () {
+    for ( let y = 0; y < TETROMINO_SIZE; y++ ) {
+        for ( let x = 0; x < TETROMINO_SIZE; x++ ) {
+            if ( tetromino[y][x] != 0 ) {
+                field[tetromino_y+y][tetromino_x+x] = 1;
+            }
+        }
+    }
+}
+
+
+//Drop a new tetromino
+function dropTetromino () {
+    if ( checkMove( 0, 1 ) ) {
+        tetromino_y++;
+    } else {
+        //Once the tetromino reaches the screen bottom, a user can not move it
+        fixTetromino();
+        tetromino_x = 0;
+        tetromino_y = 0;
+    }
+
+    drawAll();
+}
+
 
 //Process when a user presses a certain key
 document.onkeydown = function( e ) {
