@@ -24,8 +24,7 @@ $canvas.width        = SCREEN_W;
 $canvas.height       = SCREEN_H;
 $canvas.style.border = "4px solid #555";
 
-
-//Array to express four blocks * four blocks 
+//Two-dimensional array to express four blocks * four blocks 
 //0 is empty space, 1 has a block.
 let tetromino = [
     [ 0, 0, 0, 0 ],
@@ -38,13 +37,43 @@ let tetromino = [
 let tetromino_x = 0;
 let tetromino_y = 0;
 
+//Field itself
+let field = [];
+
+
+//Initialize an empty field with FIELD_COLUMN * FIELD_ROW
+for ( let y = 0; y < FIELD_ROW; y++ ) {
+    field[y] = [];
+    for ( let x = 0; x < FIELD_COLUMN; x++ ) {
+        field[y][x] = 0;
+    }
+}
+
+
+drawField();
 drawTetromino();
 
-//Print a tetromino
-function drawTetromino () {
+
+//Draw a field
+function drawField () {
 
     //Clear the previous image
     context.clearRect( 0, 0, SCREEN_W, SCREEN_H );
+
+    for ( let y = 0; y < FIELD_ROW; y++ ) {
+        field[y] = [];
+        for ( let x = 0; x < FIELD_COLUMN; x++ ) {
+            if ( field[y][x] != 0 ) {
+                let printX = x * BLOCK_SIZE;
+                let printY = y * BLOCK_SIZE;
+            }
+        }
+    }
+}
+
+
+//Draw a tetromino
+function drawTetromino () {
 
     for ( let y = 0; y < TETROMINO_SIZE; y++ ) {
         for ( let x = 0; x < TETROMINO_SIZE; x++ ) {
@@ -80,5 +109,6 @@ document.onkeydown = function( e ) {
             break;
     }
 
+    drawField();
     drawTetromino();
 }
