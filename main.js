@@ -45,6 +45,7 @@ drawAll();
 
 //Initialize an empty field with FIELD_COLUMN * FIELD_ROW
 function init () {
+    //Clear the field
     for ( let y = 0; y < FIELD_ROW; y++ ) {
         field[y] = [];
         for ( let x = 0; x < FIELD_COLUMN; x++ ) {
@@ -97,20 +98,49 @@ function drawAll () {
 }
 
 
+//Check if the new coordinate is available
+function checkMove ( moveX, moveY ) {
+    for ( let y = 0; y < TETROMINO_SIZE; y++ ) {
+        for ( let x = 0; x < TETROMINO_SIZE; x++ ) {
+
+            if ( tetromino[y][x] != 0 ) {
+                let newX = tetromino_x + x + moveX;
+                let newY = tetromino_y + y + moveY;
+
+                if ( field[newY][newX] != 0  ||  newX < 0  ||  newY < 0  ||  
+                    FIELD_COLUMN <= newX  ||  FIELD_ROW <= newY ) {
+                    return false;
+                }
+            }
+        }
+    }
+
+    return true;
+}
+
+
 //Process when a user presses a certain key
 document.onkeydown = function( e ) {
     switch( e.code ) {
         case 'ArrowLeft':  //←
-            tetromino_x--;
+            if ( checkMove( -1, 0 ) ) {
+                tetromino_x--;
+            }
             break;
         case 'ArrowUp':    //↑
-            tetromino_y--;
+            if ( checkMove( 0, -1 ) ) {
+                tetromino_y--;
+            }
             break;
         case 'ArrowRight': //→
-            tetromino_x++;
+            if ( checkMove( 1, 0 ) ) {
+                tetromino_x++;
+            }
             break;
         case 'ArrowDown':  //↓
-            tetromino_y++;
+            if ( checkMove( 0, 1 ) ) {
+                tetromino_y++;
+            }
             break;
         case 'Space':      //Space key
             break;
