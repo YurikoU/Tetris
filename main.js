@@ -49,7 +49,6 @@ for ( let y = 0; y < FIELD_ROW; y++ ) {
     }
 }
 
-
 drawField();
 drawTetromino();
 
@@ -61,11 +60,14 @@ function drawField () {
     context.clearRect( 0, 0, SCREEN_W, SCREEN_H );
 
     for ( let y = 0; y < FIELD_ROW; y++ ) {
-        field[y] = [];
         for ( let x = 0; x < FIELD_COLUMN; x++ ) {
             if ( field[y][x] != 0 ) {
                 let printX = x * BLOCK_SIZE;
                 let printY = y * BLOCK_SIZE;
+                context.fillStyle = "red";
+                context.fillRect( printX, printY, BLOCK_SIZE, BLOCK_SIZE );//Draw a tetromino with BLOCK_SIZE at (printX,printY) coordinate
+                context.strokeStyle = "black";//Draw a frame
+                context.strokeRect( printX, printY, BLOCK_SIZE, BLOCK_SIZE );
             }
         }
     }
