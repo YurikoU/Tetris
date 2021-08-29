@@ -236,13 +236,48 @@ function fixTetromino () {
 }
 
 
+//Check if any line is completed and clear it
+function checkLine () {
+    let lineCount = 0;
+
+    for ( let y = 0; y < FIELD_ROW; y++ ) {
+        //Variable to see if a line is completed
+        let isCompleted = true;
+
+        //Check the completion
+        for ( let x = 0; x < FIELD_COLUMN; x++ ) {
+            //If NO block is found, it means the line is not completed yet
+            if ( !field[y][x] ) {
+                isCompleted = false;
+                break;
+            }
+        }
+
+        //Clear a completed line
+        if ( isCompleted ) {
+            lineCount++;
+
+            for ( let newY = y; 0 < newY; newY-- ) {
+                for ( let newX = 0; newX < FIELD_COLUMN; newX++ ) {
+                    //A new line will be updated as the upper line
+                    field[ newY ][ newX ] = field[ newY-1 ][ newX ];
+                }
+            }
+        }
+    }
+}
+
+
 //Drop a new tetromino
 function dropTetromino () {
     if ( checkMove( 0, 1 ) ) {
         tetromino_y++;
     } else {
-        //Once the tetromino reaches the screen bottom, a user can not move it
+        //Once the tetromino reaches the bottom line, a user can not move it
         fixTetromino();
+
+        //Check if a line can be deleted
+        checkLine();
 
         //A new tetromino shape will be selected randomly again
         tetromino_type = Math.floor( Math.random() * (TETROMINO_TYPES.length-1) ) + 1;
@@ -255,7 +290,7 @@ function dropTetromino () {
 }
 
 
-//Process when a user presses a certain key
+//Movement when a user presses a certain key
 document.onkeydown = function( e ) {
     switch( e.code ) {
         case 'ArrowLeft': //←
