@@ -26,7 +26,6 @@ $canvas.width        = SCREEN_W;
 $canvas.height       = SCREEN_H;
 $canvas.style.border = "4px solid #555";
 
-
 const TETROMINO_COLORS = [
     "#000", //#0, no color (dummy)
     "#6CF", //#1, light blue
@@ -124,10 +123,8 @@ let field = [];
 let isGameOver = false;
 
 
-init();
-drawAll();
 
-setInterval( dropTetromino, GAME_SPEED );
+init();
 
 
 //Initialize an empty field with FIELD_COLUMN * FIELD_ROW
@@ -139,12 +136,12 @@ function init () {
             field[y][x] = 0;
         }
     }
-    
-    //Demo
-    field[19][0] = 1;
-    field[19][9] = 1;
-    field[ 0][9] = 1;
+
+    //Start drawing the
+    setInterval( dropTetromino, GAME_SPEED );
+    drawAll();
 }
+
 
 //Draw a single block
 function drawBlock ( x, y, color ) {
