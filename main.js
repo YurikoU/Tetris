@@ -120,6 +120,9 @@ tetromino = TETROMINO_TYPES[ tetromino_type ];
 //Field content
 let field = [];
 
+//Variable to see if the game is over
+let isGameOver = false;
+
 
 init();
 drawAll();
@@ -177,6 +180,20 @@ function drawAll () {
                 drawBlock( tetromino_x+x, tetromino_y+y, tetromino_type );
             }
         }
+    }
+
+    //Once the game is over, the message will be displayed
+    if ( isGameOver ) {
+        let message = "GAME OVER";
+        context.font = "40px 'Impact'";
+        let messageWidth = context.measureText( message ).width;
+        let messageX = SCREEN_W / 2 - messageWidth / 2;
+        let messageY = SCREEN_H / 2 - 20;
+
+        context.lineWidth = 4;
+        context.strokeText( message, messageX, messageY );//Draw the frame
+        context.fillStyle = "white";//Font color
+        context.fillText( message, messageX, messageY );
     }
 }
 
@@ -270,6 +287,11 @@ function checkLine () {
 
 //Drop a new tetromino
 function dropTetromino () {
+    //If the game is over, no more new tetromino will be dropped
+    if ( isGameOver ) {
+        return;
+    }
+
     if ( checkMove( 0, 1 ) ) {
         tetromino_y++;
     } else {
@@ -284,6 +306,11 @@ function dropTetromino () {
         tetromino   = TETROMINO_TYPES[ tetromino_type ];
         tetromino_x = START_X;
         tetromino_y = START_Y;
+
+        //Check if the tetrominos stock by the starting X-axis
+        if ( !checkMove(0, 0) ) {
+            isGameOver = true;
+        }
     }
 
     drawAll();
@@ -292,6 +319,11 @@ function dropTetromino () {
 
 //Movement when a user presses a certain key
 document.onkeydown = function( e ) {
+    //If the game is over, the tetromino won't rotate or move
+    if ( isGameOver ) {
+        return;
+    }
+
     switch( e.code ) {
         case 'ArrowLeft': //←
             if ( checkMove( -1, 0 ) ) {
